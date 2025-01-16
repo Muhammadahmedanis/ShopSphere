@@ -13,6 +13,7 @@ import NotFound from './routes/NotFound'
 import { AuthContext } from './context/authContext'
 import { use } from 'react';
 import Dashboard from './components/Dashboard'
+import SingleProduct from './routes/SingleProduct'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
   
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
             <Route index element={<Home />} />
+            <Route path='/singleProd' element={ <SingleProduct /> } />
           </Route>
 
           {isExist && <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />} 

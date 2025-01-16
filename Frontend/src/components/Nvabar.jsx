@@ -9,6 +9,8 @@ import { IoSunny } from "react-icons/io5";
 import useTheme from "../context/themeContext";
 import { MdOutlineDashboard } from "react-icons/md";
 import { toast } from 'react-toastify';
+import AddToCartSideBar from "./AddtoCartSideBar";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 function Nvabar() {
   const [openModal, setOpenModal] = useState(false);
@@ -20,11 +22,19 @@ function Nvabar() {
       slug: "/",
     },
     {
-      name: "About",
+      name: "FEATURES",
       slug: "/about",
     },
     {
-      name: 'Contact',
+      name: 'SHOP',
+      slug: '/shop',
+    },
+    {
+      name: 'BLOG',
+      slug: '/blog',
+    },
+    {
+      name: 'CONTACT',
       slug: '/contact',
     },
   ]
@@ -51,77 +61,66 @@ function Nvabar() {
   }
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-    <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-        <img src="https://merakiui.com/images/full-logo.svg" className="h-7" />
-    </a>
-    <div className="flex items-center md:order-2 gap-x-3 md:space-x-0 flex-row-reverse">
-          <button onClick={() => setOpenModal(!openModal)}
-            type="button"
-            className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-white"
-            aria-haspopup="true">
-            <span className="absolute -inset-1.5"></span>
-            <div className="size-11 bg-gray-300 border-none font-bold text-[21px] flex items-center justify-center outline-none rounded-full">{user.user.slice(0, 1).toUpperCase()}</div>
-          </button>
-        <div className={`z-50 ${openModal ? 'block' : 'hidden'} my-4 top-3 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700`}>
-             {/* Dropdown menu */}
-             <div
-            className={` ${openModal ? "block" : "hidden"} absolute right-1  top-14 z-10 mt-1 w-[132px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none`}
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="user-menu-button"
-            tabIndex="-1">
-            <button
-            onClick={handleTheme}
-              href="#"
-              className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700"
-              role="menuitem"
-              tabIndex="-1"
-              id="user-menu-item-1">
-              Theme
-              { theme === "light" ?  <IoSunnyOutline className="font-bold w-12" size={23} /> : <IoSunny size={23}/> }      
-            </button>
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700"
-              role="menuitem"
-              tabIndex="-1"
-              id="user-menu-item-2">
-              Sign Out
-              <RiLogoutCircleRLine className="font-bold w-9" size={19} />
-            </button>
-            {user.admin && <button
-              className="flex flex-1 items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700"
-              role="menuitem"
-              tabIndex="-1"
-              id="user-menu-item-2">
-               <Link to="/dashboard">Dashboard</Link>
-              <MdOutlineDashboard className="font-bold w-9" size={19} />
-            </button>}
-          </div>
+    <div className={isOpen ? '' : 'w-full bg-white sticky top-0 z-10 drop-shadow-md '}>
+      <div className='flex flex-wrap justify-between place-items-center px-2 py-3 pl-5 pr-4 dark:bg-gray-900 dark:text-white'>
+        <div className='sm:hidden'>
+          { isOpen ? '' : <FaBars onClick={() => setIsOpen(!isOpen)} />}
         </div>
-        <button onClick={() => setIsOpen(!isOpen)} type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden dark:text-gray-400 dark:hover:bg-gray-700 ">
-          <GiHamburgerMenu size={23} />
-      </button>
+        <div>
+          <Link to='/' className='font-bold text-3xl '>
+            WOOD <span className='text-yellow-500 '>COM</span>
+          </Link>
+        </div>
+        <div className={`${isOpen ? "transform translate-x-0" : 'transform -translate-x-full'} sm-flex bg-white fixed inset-y-0 left-0 z-50  w-64 overflow-y-auto transition-transform ease-in-out duration-300`} style={{zIndex: '1111'}}>
+          <FaTimes onClick={() => setIsOpen(!isOpen)} className='absolute top-3 right-3' />
+          <ul className='flex flex-col p-4 m-8 font-bold '>
+            {
+              navItems.map((item, ind) => (
+                <div className='mb-3' key={ind}> 
+                  <li className='mr-5 hover:text-red-600' > <NavLink to={item.slug}></NavLink> {item.name}</li> 
+                </div>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div className='hidden sm:flex '>
+        <ul className='flex uppercase font-semibold '>
+            {
+              navItems.map((item, ind) => (
+                <div className='mb-3' key={ind}> 
+                  <li className='mr-5 hover:text-red-600' > <NavLink to={item.slug}></NavLink> {item.name}</li> 
+                </div>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div className='padding: 10px flex items-center gap-x-2'>
+          <button onClick={() => setOpenModal(!openModal)} type="button" className="relative size-11  font-bold text-[22px] rounded-full flex items-center justify-center bg-gray-300 text-sm focus:outline-none focus:ring-white">
+               {user.user.slice(0, 1).toUpperCase()}
+          </button>
+          <div className={` ${openModal ? "block" : "hidden"} absolute right-1  top-14 z-10 mt-1 w-[132px] origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none`}>
+          <button onClick={handleTheme}
+            className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+            Theme
+            { theme === "light" ?  <IoSunnyOutline className="font-bold w-12" size={23} /> : <IoSunny size={23}/> }      
+          </button>
+          <button onClick={handleLogout}
+            className="flex items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+            Sign Out
+            <RiLogoutCircleRLine className="font-bold w-9" size={19} />
+          </button>
+          {user.admin && <button
+            className="flex flex-1 items-center justify-center w-full font-semibold gap-2 px-4 py-2 text-sm hover:bg-gray-300 rounded text-gray-700">
+              <Link to="/dashboard">Dashboard</Link>
+            <MdOutlineDashboard className="font-bold w-9" size={19} />
+          </button>}
+          </div>
+          <AddToCartSideBar />
+        </div>
+      </div>
     </div>
-    <div className={`items-center justify-between ${isOpen ? 'block' : 'hidden'} w-full md:flex md:w-auto md:order-1 `}>
-      <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-        {
-            navItems?.map((nav) => (
-              <li key={nav.name}>
-                <NavLink
-                  to={nav.slug}
-                  className={({ isActive }) => `px-2.5 py-2 ${isActive && 'bg-red-400'} block text-gray-700 cursor-pointer transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2`}>
-                  {nav.name}
-                </NavLink>
-              </li>
-            ))
-          }
-      </ul>
-    </div>
-    </div>
-  </nav>
   )
 }
 

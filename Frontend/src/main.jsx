@@ -4,12 +4,16 @@ import './index.css'
 import App from './App.jsx'
 import { Bounce, ToastContainer } from 'react-toastify';
 import { AuthContextProvider } from './context/authContext.jsx';
+import { Provider } from 'react-redux'
+import store from './redux/store.js'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <Provider store={store}>
      <AuthContextProvider>
         <App />
      </AuthContextProvider>
+     </Provider>
     <ToastContainer
       position="top-right"
       autoClose={3000}

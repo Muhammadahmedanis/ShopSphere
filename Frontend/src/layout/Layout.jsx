@@ -38,11 +38,9 @@ const Layout = () => {
     isloading ? ( <Loader /> ) : 
     ( 
       <ThemeContextProvider value={{theme, lightThemeMode, darkThemeMode}}>
-        <div className={`${theme} flex flex-col min-h-screen`}>
+        <div className={`${theme}`}>
           <Nvabar />
-          <div className="bg-gray-500 flex-1">
             <Outlet />
-          </div>
           <Footer />
         </div>
       </ThemeContextProvider>
