@@ -12,5 +12,4 @@ authRouter.post('/forgotPass', forgotPasswordEmail);
 authRouter.post('/resetPass/:token', resetPasswordEmail);
 authRouter.post('/resendOtp', createRateLimiter(2 * 60 * 1000, 5, "Too much otp request hit, please try again after two minute"), resendOtp);
 // authRouter.get("/checkAuth", tokenVerify, checkAuth);
-
 export default authRouter;

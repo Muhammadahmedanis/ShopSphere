@@ -1,5 +1,5 @@
 export const responseMessages = {
-    ADD_SUCCESS_MESSAGES: 'resource added successfully',
+    ADD_SUCCESS_MESSAGES: 'resource create successfully',
     ADD_UNSUCCESS_MESSAGES: 'data already available in DB',
     ADMIN_ACCESS: 'Admin has access to this page',
 
@@ -22,6 +22,7 @@ export const responseMessages = {
     INTERNAL_ERROR_MESSAGE: 'Something went wrong',
     INVALID_OTP: "Invalid OTP, try again",
     INVALID_TOKEN: "Unauthorized User, Invalid token",
+    INVALID_CREDENTIALS: "Invalid Credentials",
 
     MISSING_FIELDS: 'All Fields are required',
     MISSING_FIELD_EMAIL: 'Email Field is Required',

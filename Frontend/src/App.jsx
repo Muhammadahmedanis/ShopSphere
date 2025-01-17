@@ -28,8 +28,8 @@ function App() {
           <Route path='/signup' element={ <Signup /> } />
           <Route path='/otp' element={ <Otp />} />
           <Route path='/signin' element={ !isExist ?  <Signin /> : <Navigate to="/" /> } />
-          <Route path='/forgotpass' element={ isExist ?  <Forgotpass /> : <Navigate to="/signin" />} />
-          <Route path='/resetPass/:token' element={ isExist ?  <ResetPassword /> : <Navigate to="/signin" /> } />
+          <Route path='/forgotpass' element={ <Forgotpass /> } />
+          <Route path='/resetPass/:token' element={ <ResetPassword /> } />
           <Route path='*' element={<NotFound />} />
   
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>

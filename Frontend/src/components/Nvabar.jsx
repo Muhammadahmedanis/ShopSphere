@@ -1,7 +1,5 @@
 import React, { use, useState } from "react";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { IoMdCloseCircle } from "react-icons/io";
-import { GiHamburgerMenu } from "react-icons/gi";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { IoSunnyOutline } from "react-icons/io5";

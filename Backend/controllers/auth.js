@@ -9,7 +9,8 @@ import { responseMessages } from '../constant/responseMessages.js';
 import { generateToken } from '../middleware/token.js';
 const { MISSING_FIELDS, USER_NAME_EXISTS, UN_AUTHORIZED, SUCCESS_REGISTRATION, NO_USER, SUCCESS_LOGIN, INVALID_OTP, OTP_EXPIRED, EMAIL_VERIFY, SUCCESS_LOGOUT, MISSING_FIELD_EMAIL, NO_USER_FOUND, RESET_LINK_SUCCESS, PASSWORD_UPDATED, NOT_VERIFY, PASSWORD_AND_CONFIRM_NO_MATCH, RESET_OTP_SECCESS, INVALID_TOKEN } = responseMessages
 import { v4 as uuidv4 } from 'uuid'
-import { sendEmailOTP } from '../helpers/sendEmail.js';
+import { sendEmailLink, sendEmailOTP } from '../helpers/sendEmail.js';
+const { sign, verify } = jwt;
 
 
 // @desc    SIGNUP
@@ -157,65 +158,31 @@ export const logout = async(req, res) => {
 // @route   POST api/v1/auth/forgotPasswordEmail
 // @access  Public
 
-export const forgotPasswordEmail = async(req, res) => {
+export const forgotPasswordEmail = async (req, res) => {
     try {
         const { email } = req.body;
-        if (email) {
-            const user = await Users.findOne({ email });
-            if (user) {
-                    if(user?.isVerified){
-
-                const secret = user._id + process.env.JWT_SECRET_KEY;
-                const token = generateToken({ data: secret, expiresIn: "30m"})
-                const link = `${process.env.CLIENT_URL}/resetPass/${token}`
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: {
-                        user: process.env.PORTAL_EMAIL,
-                        pass: process.env.PORTAL_PASSWORD,
-                    },
-                });
-                
-                const mailOptions = {
-                    from: process.env.PORTAL_EMAIL,        //email jis se bhejni ho
-                    to: email,         //jisko email bhejni ho
-                    subject: 'Reset Password',
-                    html: `
-                    <div style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">
-                    <h2>Password Reset Request</h2>
-                    <p>Hello,</p>
-                    <p>We received a request to reset your password. Please click the link below to reset it. This link will expire in <strong>30 minutes</strong>.</p>
-                    <p><a href="${link}" style="color: #007bff;">${link}</a></p>
-                    <p>If you did not request this, please ignore this email.</p>
-                    <p>Thank you,</p>
-                    <p>Meraki</p>
-                    </div>`
-                };
-                
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).status(sendError({status: false, message: error}));
-                    } else {
-                        console.log(`email send at ${info.response}`);
-                        return res.status(OK).send(sendSuccess({status: true, message: RESET_LINK_SUCCESS}))
-                    }
-                })
-                } else{
-                    return res.status(StatusCodes.NOT_FOUND).send(sendError({status: false, massage: NOT_VERIFY}))
-                }
-
-            } else {
-                return res.status(StatusCodes.NOT_FOUND).send(sendError({status: false, message: NO_USER_FOUND}));
-            }
-
-        } else {
-            req.status(StatusCodes.BAD_REQUEST).send({status: false, message: MISSING_FIELD_EMAIL});
+        if (!email) {
+            return res.status(StatusCodes.BAD_REQUEST).send({ status: false, message: MISSING_FIELD_EMAIL });
         }
-
+        const user = await Users.findOne({ email });
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).send(sendError({ status: false, message: NO_USER_FOUND }));
+        }
+        if (!user.isVerified) {
+            return res.status(StatusCodes.NOT_FOUND).send(sendError({ status: false, message: NOT_VERIFY }));
+        }
+        const secret = user._id + process.env.JWT_SECRET_KEY;
+        const token = generateToken({ data: secret, expiresIn: "30m" });
+        const link = `${process.env.CLIENT_URL}/resetPass/${token}`;
+        // Send link through email
+        const sendLink = await sendEmailLink(email, link);
+        console.log(`Email sent: ${sendLink}`);
+        return res.status(StatusCodes.OK).send(sendSuccess({ status: true, message: RESET_LINK_SUCCESS }));
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error}));
+        console.error(`Error: ${error.message}`);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({ status: false, message: error.message }));
     }
-}
+};
 
 
 
@@ -228,19 +195,23 @@ export const resetPasswordEmail = async(req, res) => {
     try {
         const { token } = req?.params;
         const { newPassword, confirmNewPassword } = req?.body;
-        console.log(newPassword, confirmNewPassword, token );
         if(newPassword && confirmNewPassword && token){
             if(newPassword === confirmNewPassword){
-                const { data } = jwt.verify(token, process.env.JWT_SECRET_KEY);
-                console.log(data);
-                const userId = data.slice(0, data.length - process.env.JWT_SECRET_KEY.length);
-                const user = await Users.findById(userId)
+                const decoded = verify(token, process.env.JWT_SECRET_KEY);
+                //getting length
+                const filteredKeys = Object.keys(decoded).filter(key => key !== 'iat' && key !== 'exp');
+                const length = filteredKeys.length;
+                const userIdWithSecret = Object.values(decoded).slice(0, length).join('');
+                const secretKeyLength = process.env.JWT_SECRET_KEY.length;
+                const userId = userIdWithSecret.slice(0, -secretKeyLength);
+                console.log("Extracted User ID:", userId);
+                const user = await Users.findById(String(userId))
                 if(user){
                     const hashedPassword = bcrypt.hashSync(newPassword, 10);
                     await Users.findByIdAndUpdate(userId, {
                         $set: {password: hashedPassword}
                     })
-                    return res.status(OK).send(sendSuccess({status: true, message: PASSWORD_UPDATED}))
+                    return res.status(StatusCodes.OK).send(sendSuccess({status: true, message: PASSWORD_UPDATED}))
                 }else{
                     return res.status(StatusCodes.NOT_FOUND).send(sendError({ status: false, message: NO_USER}))
                 }
@@ -254,6 +225,7 @@ export const resetPasswordEmail = async(req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}))
     }
 }
+
 
 
 

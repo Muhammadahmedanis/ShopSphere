@@ -1,11 +1,13 @@
 import express from 'express';
-import { deletetUser, editUser, getAllUser, updatetUser} from '../controllers/user.js';
-import { verifyAdmin } from '../middleware/token.js';
+import { verifyTokenAndAdmin, verifyTokenAndAuthorization } from '../middleware/token.js';
+import { deletetUser, fetchUsersByMonth, getAllUser, getUser, updatetUser} from '../controllers/user.js';
+
 const userRouter = express.Router();
 
-userRouter.get("/getUsers", verifyAdmin, getAllUser);
-userRouter.get("/editUser/:id", verifyAdmin, editUser);
-userRouter.put("/updUser/:id", updatetUser);
-userRouter.delete("/deleteUser/:id", verifyAdmin, deletetUser);
+userRouter.put("/:id", verifyTokenAndAuthorization, updatetUser);
+userRouter.delete("/:id", verifyTokenAndAuthorization, deletetUser);
+userRouter.get("/find/:id", verifyTokenAndAdmin, getUser);
+userRouter.get("/", getAllUser);
+userRouter.get("/stats", fetchUsersByMonth);
 
 export default userRouter;

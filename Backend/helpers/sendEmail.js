@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from 'dotenv';
-import { Verification_Email_Template } from "../constant/email.template.js";
+import { Verification_Email_Template, SEND_EMAIL_LINK,  } from "../constant/email.template.js";
 dotenv.config();
 
 // Function to send OTP via email
@@ -30,4 +30,23 @@ async function sendEmailOTP(mail, otp) {
     }
 }
 
-export { sendEmailOTP }
+
+async function sendEmailLink(mail, link) { 
+    console.log(link);
+    const transporter = nodemailer.createTransport(emailConfig);
+    const mailOptions = {
+        from: process.env.PORTAL_EMAIL,
+        to: mail, 
+        subject: "RESET PASSWORD",
+        html: SEND_EMAIL_LINK(link), // html body 
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        return `OTP sent to ${mail} via email`;
+    } catch (error) {
+        throw `Error sending OTP to ${mail} via email: ${error}`;
+    }
+}
+
+export { sendEmailOTP, sendEmailLink }

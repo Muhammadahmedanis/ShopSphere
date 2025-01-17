@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify';
 
 function Forgotpass() {
@@ -9,6 +9,7 @@ function Forgotpass() {
         try {
             await axios.post("/api/v1/auth/forgotPass", { email });
             toast.success("Email sent Successful");
+            setEmail("");
         } catch (error) {
             toast.error(error.response?.data.message);
         }
@@ -35,6 +36,7 @@ function Forgotpass() {
                                 <div className="relative">
                                     <input
                                         onChange={(e) => setEmail(e.target.value)}
+                                        value={email}
                                         type="email"
                                         id="email"
                                         name="email"
