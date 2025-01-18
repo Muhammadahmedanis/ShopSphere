@@ -12,6 +12,7 @@ import userRouter from './routes/user.js';
 import cartRouter from './routes/cart.js';
 import orderRouter from './routes/order.js';
 import productRouter from './routes/product.js';
+import paymentRouter from './routes/payment.js';
 
 const app = express();
 app.use(express.json());
@@ -31,6 +32,8 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product",productRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/cart", cartRouter);
+app.use("/api/v1/payment", paymentRouter);
+
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).send(sendError({

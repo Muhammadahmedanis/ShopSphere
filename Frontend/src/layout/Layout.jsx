@@ -38,9 +38,9 @@ const Layout = () => {
     isloading ? ( <Loader /> ) : 
     ( 
       <ThemeContextProvider value={{theme, lightThemeMode, darkThemeMode}}>
-        <div className={`${theme} bg-gray-700`}>
+        <div className={`${theme}`}>
           <Nvabar />
-            <div className="bg-gray-600">
+            <div className="bg-gray-200">
               <Outlet />
             </div>
           <Footer />

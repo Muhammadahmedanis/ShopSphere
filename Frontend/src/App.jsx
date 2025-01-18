@@ -14,6 +14,7 @@ import { AuthContext } from './context/authContext'
 import { use } from 'react';
 import Dashboard from './components/Dashboard'
 import SingleProduct from './routes/SingleProduct'
+import Payment from './routes/Payment'
 
 
 function App() {
@@ -35,7 +36,8 @@ function App() {
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
             <Route index element={<Home />} />
             <Route path='/singleProd' element={ <SingleProduct /> } />
-          </Route>
+            <Route path='/payment' element={ <Payment /> }/>
+          </Route> 
 
           {isExist && <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />} 
         </>
