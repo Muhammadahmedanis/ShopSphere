@@ -4,55 +4,18 @@ import { HiFunnel, HiSquares2X2 } from "react-icons/hi2";
 import { FaCartShopping, FaHeart, FaEye, } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { addToCart, getCartTotal } from "../redux/cartSlice";
+import { useLocation } from 'react-router-dom';
+import BestSeller from '../components/BestSeller';
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
+  // { name: 'Most Popular',  current: true },
+  // { name: 'Best Rating', current: false },
+  { name: 'Newest' },
+  { name: 'Low to High' },
+  { name: 'High to Low'},
 ];
 
 
-const products = [
-    {
-      id: 1,
-      img: "/images/product/product1.jpg",
-      name: "BEDROOM",
-      price: "55.00",
-    },
-    {
-      id: 2,
-      img: "/images/product/product2.jpg",
-      name: "OFFICE",
-      price: "65.00",
-    },
-    {
-      id: 3,
-      img: "/images/product/product6.jpg",
-      name: "LIGHTING",
-      price: "85.00",
-    },
-    {
-      id: 4,
-      img: "/images/product/product5.jpg",
-      name: "BATHROOM",
-      price: "95.00",
-    },
-    {
-      id: 5,
-      img: "/images/product/product4.jpg",
-      name: "KITCHEN",
-      price: "35.00",
-    },
-    {
-      id: 6,
-      img: "/images/product/product3.jpg",
-      name: "INTERIOR",
-      price: "50.00",
-    },
-
-];
 
 const filters = [
   {
@@ -64,7 +27,7 @@ const filters = [
       { value: 'blue', label: 'Blue', checked: false },
       { value: 'brown', label: 'Brown', checked: false },
       { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
+      { value: 'pink', label: 'Pink', checked: false },
     ],
   },
   {
@@ -78,14 +41,14 @@ const filters = [
       { value: 'XL', label: 'XL', checked: false },
     ],
   },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'Man', label: 'Man', checked: false },
-      { value: 'Woman', label: 'Woman', checked: false },
-    ],
-  },
+  // {
+  //   id: 'category',
+  //   name: 'Category',
+  //   options: [
+  //     { value: 'Man', label: 'Man', checked: false },
+  //     { value: 'Woman', label: 'Woman', checked: false },
+  //   ],
+  // },
 ];
 
 function classNames(...classes) {
@@ -93,31 +56,39 @@ function classNames(...classes) {
 }
 
 export default function Example() {
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortMenuOpen, setSortMenuOpen] = useState(false);
-//   const[menuItem, setMenuItem] = useState(products);
-    const [qty] = useState(1);
-    // const filterItems = (name) => {
-    //   const newItems = products.filter((item) => item.name === name);
-    //   setMenuItem(newItems); 
-    //   if(name === 'all'){
-    //     setMenuItem(products)
-    //     return;
-    //   }
-    // }
-  
-    const dispatch = useDispatch();
-    const handleAddToCart = (item) => {
-    let totalPrice = qty * item.price;
 
-    const tempProduct = {
-        ...item,
-        quantity: qty,
-        totalPrice, 
-    }
-    dispatch(addToCart(tempProduct));
-    dispatch(getCartTotal());
-    }
+const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+const [sortMenuOpen, setSortMenuOpen] = useState(false);
+const [qty] = useState(1);
+const dispatch = useDispatch();
+const handleAddToCart = (item) => {
+  let totalPrice = qty * item.price;
+  
+  const tempProduct = {
+    ...item,
+    quantity: qty,
+    totalPrice, 
+  }
+  dispatch(addToCart(tempProduct));
+  dispatch(getCartTotal());
+}
+
+
+  const location =  useLocation();
+  const category = location.pathname.split("/")[2];
+
+  const[filter, setFilter] = useState({});
+  const[sort, setSort] = useState("");
+
+  const handleFilter = (e) => {
+    const { name, value, checked } = e.target;
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      [name]: checked ? 
+      [...(prevFilter[name] || []), value] :
+      (prevFilter[name]).filter(item => item !== value),
+    }))
+  }
 
   return (
     <div className="bg-white">
@@ -159,6 +130,8 @@ export default function Example() {
                         {section.options.map((option) => (
                           <div key={option.value} className="flex items-center">
                             <input
+                              onChange={handleFilter}
+                              value={option.label}
                               type="checkbox"
                               id={option.value}
                               name={section.id}
@@ -183,38 +156,25 @@ export default function Example() {
         )}
 
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
+          <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-4">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-              New Arrivals
+              {category}
             </h1>
             <div className="flex items-center">
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setSortMenuOpen(!sortMenuOpen)}
-                  className="group inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900"
-                >
+                  className="group inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900">
                   Sort
-                  <IoIosArrowDown
-                    className="w-4 h-4 ml-1 text-gray-400 group-hover:text-gray-500"
-                  />
+                  <IoIosArrowDown className="w-4 h-4 ml-1 text-gray-400 group-hover:text-gray-500" />
                 </button>
                 {sortMenuOpen && (
                   <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow-lg rounded-md">
-                    <ul className="py-1">
+                    <ul className="py-1 cursor-pointer">
                       {sortOptions.map((option) => (
-                        <li key={option.name}>
-                          <a
-                            href={option.href}
-                            className={classNames(
-                              option.current
-                                ? 'font-medium text-gray-900'
-                                : 'text-gray-500',
-                              'block px-4 py-2 text-sm'
-                            )}
-                          >
-                            {option.name}
-                          </a>
+                        <li key={option.name} className='px-4 py-1 text-sm text-gray-500' onClick={() => setSort(option.name)}>
+                          {option.name}
                         </li>
                       ))}
                     </ul>
@@ -233,20 +193,10 @@ export default function Example() {
             </div>
           </div>
           <section className="py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-6">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-x-2">
               {/* Sidebar Filters */}
               <aside className="hidden lg:block">
                 <form>
-                  {/* <h3 className="font-medium text-gray-900">Categories</h3> */}
-                  {/* <ul className="mt-4 space-y-4">
-                    {subCategories.map((category) => (
-                      <li key={category.name}>
-                        <a href={category.href} className="text-gray-700">
-                          {category.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul> */}
                   <div>
                     {filters.map((section) => (
                       <div key={section.id} className="border-b border-gray-200 py-4">
@@ -255,11 +205,13 @@ export default function Example() {
                           {section.options.map((option) => (
                             <div key={option.value} className="flex items-center">
                               <input
-                                type="checkbox"
-                                id={option.value}
-                                name={section.id}
-                                defaultChecked={option.checked}
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600"
+                              type="checkbox"
+                              name={section.id}
+                              value={option.label}
+                              onChange={handleFilter}
+                              id={option.value}
+                              // defaultChecked={option.checked}
+                              className="h-4 w-4 rounded border-gray-300 text-indigo-600"
                               />
                               <label
                                 htmlFor={option.value}
@@ -276,30 +228,10 @@ export default function Example() {
                 </form>
               </aside>
               {/* Product Grid */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-4">
                 <h2 className="sr-only">Products</h2>
                 {/* Product List */}
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 border border-dashed border-gray-500 rounded">
-                  {/* Add product components here */}
-                    { products?.map((val, ind) => (
-                    <div className="mx-auto max-w-[220px] relative" key={ind}>
-                        <div className="p-1 hover:bg-gray-200 hover:shadow transition-all duration-300 relative group">
-                            <img src={val.img} alt="prodImg" className="mx-auto " />
-                            <div className="icon absolute top-0 right-0 transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ">
-                            <div className="flex flex-wrap flex-col p-2 m-1 mt-1">
-                                <FaCartShopping onClick={() => handleAddToCart(val)} size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
-                                <FaHeart size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
-                                <FaEye size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
-                            </div>
-                            </div>
-                        </div>
-                        <div className="mt-4">
-                            <div className="font-semibold uppercase">{val.name}</div>
-                            <div className="">{val.price}</div>
-                        </div>
-                        </div>
-                    ))}
-                    </div>
+                <BestSeller category={category} sort={sort} filter={filter} />
                 </div>
               </div>
           </section>

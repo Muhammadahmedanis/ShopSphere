@@ -3,12 +3,14 @@ import { FiMoon } from "react-icons/fi";
 import { IoHomeOutline  } from "react-icons/io5";
 import { HiOutlineUsers } from "react-icons/hi2";
 import { ImStatsBars2 } from "react-icons/im";
+import { TbTruckDelivery } from "react-icons/tb";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { toast } from 'react-toastify';
 import { AuthContext } from "../context/authContext";
 import axios from 'axios';
 import Table from './Table';
 import Cards from './Cards';
+import { Link } from 'react-router-dom';
 import Modal from './Modal';
 
 function Dashboard() {
@@ -42,6 +44,12 @@ const handleLogout = async () => {
         <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
           <HiOutlineUsers size={22} />
         </button>
+
+        <Link to={'/order'}>
+        <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
+              <TbTruckDelivery size={22} />
+        </button>
+        </Link>  
   
         <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
           <FiMoon size={22} />

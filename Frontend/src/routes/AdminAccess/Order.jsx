@@ -2,16 +2,16 @@ import axios from 'axios';
 import React, { useActionState, useEffect, useState } from 'react'
 import { IoTrashOutline } from "react-icons/io5";
 import { toast } from 'react-toastify';
-import Modal from './Modal';
+import Modal from '../../components/Modal.jsx';
 import { FiEdit } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
-import Label from '../components/Label.jsx'
-import Input from '../components/Input.jsx';
+import Label from '../../components/Label.jsx'
+import Input from '../../components/Input.jsx';
 import { BsFillClockFill } from "react-icons/bs";
 import { FaAngleDown } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 
-function Table() {
+function Order() {
     let token = JSON.parse(localStorage.getItem("token"));
     const [users, setUsers] = useState([])
     const [modal, setModal] = useState(false);
@@ -22,7 +22,7 @@ function Table() {
         _id: "",
     });
     const fetchData = async () => {
-        const res = await axios.get("/api/v1/user", {
+        const res = await axios.get("/api/v1/order", {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -225,4 +225,4 @@ function Table() {
     )
 }
 
-export default Table
+export default Order

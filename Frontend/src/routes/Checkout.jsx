@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
  {/* Product List */}
 const productList = [
     {
@@ -15,48 +16,43 @@ const productList = [
       quantity: 2,
       price: '$40',
     },
-    {
-      img: 'https://readymadeui.com/images/product14.webp',
-      name: 'Echo Elegance',
-      size: 37,
-      quantity: 2,
-      price: '$40',
-    },
-    {
-      img: 'https://readymadeui.com/images/product13.webp',
-      name: 'Pumps',
-      size: 37,
-      quantity: 2,
-      price: '$40',
-    },
 ]
 
 const Checkout = () => {
+  const { data , totalAmount, totalItems } = useSelector((state) => state.cart);
+  console.log(data);
+  
   return (
     <div className="font-[sans-serif] bg-white">
-      <div className="flex max-sm:flex-col gap-12 max-lg:gap-4 h-full">
+      <div className="flex max-sm:flex-col gap-12 max-lg:gap-4 md:h-auto">
         {/* Sidebar */}
-        <div className="bg-gray-100 sm:h-screen sm:sticky sm:top-0 lg:min-w-[370px] sm:min-w-[300px]">
-          <div className="relative h-full">
-            <div className="px-4 py-8 sm:overflow-auto sm:h-[calc(100vh-60px)]">
-              <div className="space-y-4">
+        <div className=" lg:min-w-[370px] sm:min-w-[300px] md:h-auto">
+          <div className="relative h-auto bg-gray-100">
+            <div className=" px-4 py-8 sm:overflow-auto sm:h-[calc(100vh-60px)] md:h-auto lg:mb-10">
+              <div className="space-y-4 mb-4">
                 { 
-                productList.map((product, index) => (
-                  <div key={index} className="flex items-start gap-4">
+                data?.map((product, index) => (
+                  <div key={index} className="flex items-start gap-4 min-h-32">
                     <div className="w-32 h-28 max-lg:w-24 max-lg:h-24 flex p-3 shrink-0 bg-gray-200 rounded-md">
                       <img src={product.img} alt={product.name} className="w-full object-contain" />
                     </div>
                     <div className="w-full">
-                      <h3 className="text-sm lg:text-base text-gray-800">{product.name}</h3>
+                      <h3 className="text-sm lg:text-base text-gray-800">{product.title}</h3>
                       <ul className="text-xs text-gray-800 space-y-1 mt-3">
-                        <li className="flex flex-wrap gap-4">
-                          Size <span className="ml-auto">{product.size}</span>
+                        {/* <li className="flex flex-wrap gap-4">
+                          Size <span className="ml-auto">{product.size+" :"}</span>
                         </li>
-                        <li className="flex flex-wrap gap-4">
-                          Quantity <span className="ml-auto">{product.quantity}</span>
+                        <li className="flex flex-wrap">
+                          Color { product.color.map((color, ind) => (
+                                    <span key={ind} style={{ backgroundColor: color }} className="ml-auto w-4 h-4 rounded-full"></span>
+                                )) 
+                                }
+                        </li> */}
+                        <li className="flex flex-wrap gap-4 text-[14px]">
+                          Quantity: <span className="ml-auto">{product.quantity}</span>
                         </li>
-                        <li className="flex flex-wrap gap-4">
-                          Total Price <span className="ml-auto">{product.price}</span>
+                        <li className="flex flex-wrap gap-4 text-[14px]">
+                          Price: <span className="ml-auto">{product.price}</span>
                         </li>
                       </ul>
                     </div>
@@ -67,7 +63,7 @@ const Checkout = () => {
             {/* Total */}
             <div className="md:absolute md:left-0 md:bottom-0 bg-gray-200 w-full p-4">
               <h4 className="flex flex-wrap gap-4 text-sm lg:text-base text-gray-800">
-                Total <span className="ml-auto">$84.00</span>
+                Total <span className="ml-auto">${totalAmount}</span>
               </h4>
             </div>
           </div>

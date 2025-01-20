@@ -23,7 +23,7 @@ function AddToCartSideBar() {
                     <FaCartShopping size={30} onClick={showRightBar} />
                 </div>
                 {showSideBar && (
-                    <div className="fixed top-14 right-0 w-80 bg-white shadow-lg">
+                    <div className="fixed top-14 right-0 w-[330px] bg-white shadow-lg">
                         <AddToCart />
                         <span className="absolute top-2 right-2 cursor-pointer text-gray-600" onClick={hideRightBar}>
                             <IoCloseCircle size={28} />

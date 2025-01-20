@@ -17,6 +17,7 @@ import SingleProduct from './routes/SingleProduct'
 import Payment from './routes/Payment'
 import Checkout from './routes/Checkout'
 import Category from './routes/Category.jsx'
+import Order from './routes/AdminAccess/order.jsx'
 
 
 function App() {
@@ -38,11 +39,18 @@ function App() {
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
             <Route index element={<Home />} />
             <Route path='/product/:id' element={ <SingleProduct /> } />
-            <Route path='/checkout' element={ <Checkout /> }/>
             <Route path='/category/:id' element={<Category />} />
+            <Route path='/checkout' element={ <Checkout /> }/>
           </Route> 
 
-          {isExist && <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />} 
+          {
+            isExist &&
+            <>
+            <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />
+            <Route path='/order' element={<Order />} /> 
+            </>
+          }
+
         </>
       )
     );

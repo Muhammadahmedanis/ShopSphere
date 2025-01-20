@@ -4,10 +4,14 @@ import { getCartTotal, removeItem, updateQty } from '../redux/cartSlice';
 import { FaPlus } from "react-icons/fa6";
 import { TiMinus } from "react-icons/ti";
 import { IoCloseCircle } from "react-icons/io5";
+import { FaArrowRight } from "react-icons/fa";
+import { data, Link } from 'react-router-dom';
 
 function AddToCart() {
     const dispatch = useDispatch();
     const{data: cartProducts, totalAmount} = useSelector((state) => state.cart);
+    // console.log(cartProducts);
+    
     useEffect(() => {
         dispatch(getCartTotal())
     }, [useSelector(state => state.cart)])
@@ -37,36 +41,70 @@ function AddToCart() {
                     <div className='bg-slate-200 '>
                     <ul className='text-center p-2'>
                         {
-                            cartProducts?.map((item, ind) => (
-                                <li key={ind} className='border-gray-400 border-2 rounded p-2 relative flex justify-around items-center gap-2 mb-2'>
-                                    <div className=''>
-                                        <img className='object-cover w-[80px]' src={item.img} alt="" />
-                                        <p className='font-semibold'>{item.name}</p>
-                                        <p className='ml-2 text-gray-600'>{item.price}</p>
-                                    </div>
-                                    <div>
-                                        <div className='flex items-center p-1 '>
-                                            <div>
-                                                <button onClick={() => decreaseQty(item.id, item.quantity)} className='rounded-full bg-black text-white font-light text-[16px] p-1 border'><TiMinus /></button>
-                                                <span className='font-semibold text-xl px-1'>{item.quantity || 1}</span>
-                                                <button onClick={() => increaseQty(item.id, item.quantity)} className='rounded-full bg-black text-white font-light text-[16px] p-1 border'><FaPlus /></button>
-                                            </div>
-                                        </div>
-                                        <span className='font-bold text-xl'>$ {item.totalPrice}</span>
-                                    </div>
-                                    <div className='text-black text-xl p-1 hover:text-slate-600 cursor-pointer absolute top-1 right-0' onClick={() => handleRemove(item.id)}>
-                                        <IoCloseCircle size={27} />
-                                    </div>
-                                </li>
+                            cartProducts.map((item, ind) => (
+                            <div key={ind} className="grid grid-cols-3">
+                            {/* Image Section */}
+                            <div className="w-20 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
+                                <img
+                                src="https://readymadeui.com/images/watch1.webp"
+                                alt="Stylish Golden Watch"
+                                className="w-full h-full object-contain"
+                                />
+                            </div>
+
+                            {/* Product Details */}
+                            <div className="">
+                                <h3 className="text-sm text-left sm:text-base font-bold text-gray-800">{item.title}</h3>
+                                <p className="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2">
+                                Color:{" "}
+                                { item.color.map((color, ind) => (
+                                    <span key={ind} style={{ backgroundColor: color }} className="flex items-center w-4 h-4 rounded-full"></span>
+                                )) 
+                                }
+                                </p>
+                                <p className="text-sm font-semibold text-gray-500 mt-2 flex items-center gap-2">
+                                Size:{" "}
+                                {item.size.map((size, ind) => (
+                                    <span key={ind} className="flex items-center font-bold">{size+" :"}</span>
+                                ))}
+                                </p>
+                                <div className="flex items-center mt-2">
+                                <button
+                                    onClick={() => decreaseQty(item.id, item.quantity)}
+                                    className="rounded-full bg-black text-white font-light text-[14px] p-1 border">
+                                    <TiMinus />
+                                </button>
+                                <span className="font-semibold text-xl px-2">{item.quantity || 1}</span>
+                                <button
+                                    onClick={() => increaseQty(item.id, item.quantity)}
+                                    className="rounded-full bg-black text-white font-light text-[14px] p-1 border">
+                                    <FaPlus />
+                                </button>
+                                </div>
+                            </div>
+                            <div className="flex flex-col justify-between items-end">
+                                <button
+                                className="text-black text-xl p-1 hover:text-slate-600 cursor-pointer"
+                                onClick={() => handleRemove(item.id)}
+                                >
+                                <IoCloseCircle size={27} />
+                                </button>
+                                {/* Price */}
+                                <p className="font-bold text-lg mt-2">${item.price*item.quantity}</p>
+                            </div>
+                            </div>
                             ))
                         }
-                        <div className='bg-slate-700 text-center text-white uppercase text-2xl p-1'>
-                            ${totalAmount}
-                        </div>
                     </ul>
                     </div>
                 )
             }
+        {
+         cartProducts.length > 0 && 
+         <Link to='/checkout'>
+            <button className='flex bottom-1 bg-red-400 items-center mt-3 px-3 py-2 rounded-sm gap-x-1'>Checkout <FaArrowRight size={20}/> </button>
+         </Link>
+        }
         </div>
     </div>
   )
