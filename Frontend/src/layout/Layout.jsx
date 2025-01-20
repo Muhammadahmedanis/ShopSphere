@@ -40,7 +40,7 @@ const Layout = () => {
       <ThemeContextProvider value={{theme, lightThemeMode, darkThemeMode}}>
         <div className={`${theme}`}>
           <Nvabar />
-            <div className="bg-gray-200">
+            <div className="">
               <Outlet />
             </div>
           <Footer />

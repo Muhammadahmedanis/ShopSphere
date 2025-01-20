@@ -14,6 +14,7 @@ export const createProduct = async (req, res) => {
     try {
         if (newProduct) {
             const saveProduct = await newProduct.save();
+            console.log(saveProduct);
             return res.status(StatusCodes.OK).send(sendSuccess({status: true,message: ADD_SUCCESS_MESSAGES, data: saveProduct }))
         } else {
             return res.status(StatusCodes.NOT_FOUND).send(sendSuccess({status: false, message: INTERNAL_ERROR_MESSAGE}))

@@ -24,7 +24,7 @@ export const tokenVerify = (req, res, next) => {
             if ( authorization && authorization.startsWith('Bearer')) {
             const token = authorization.split(" ")[1];
             const data = verify(token, process.env.JWT_SECRET_KEY);
-            req.user = data._doc;
+            req.user = data;
             next();
         }else{
             return res.status(StatusCodes.UNAUTHORIZED).send({ status: false, message: INVALID_TOKEN});
@@ -39,7 +39,7 @@ export const tokenVerify = (req, res, next) => {
 export const verifyTokenAndAdmin = (req, res, next) => {
     try {
         tokenVerify(req, res, () => {
-            if (req.user?.isAdmin) {
+            if (req.user.data?.isAdmin) {
                 next()
             } else {
                 return res.status(StatusCodes.UNAUTHORIZED).send({status: false, message: ADMIN_ACCESS})

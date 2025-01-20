@@ -15,6 +15,8 @@ import { use } from 'react';
 import Dashboard from './components/Dashboard'
 import SingleProduct from './routes/SingleProduct'
 import Payment from './routes/Payment'
+import Checkout from './routes/Checkout'
+import Category from './routes/Category.jsx'
 
 
 function App() {
@@ -35,8 +37,9 @@ function App() {
   
           <Route path='/' element={ isExist ?  <Layout />  : <Navigate to="/signin" />}>
             <Route index element={<Home />} />
-            <Route path='/singleProd' element={ <SingleProduct /> } />
-            <Route path='/payment' element={ <Payment /> }/>
+            <Route path='/product/:id' element={ <SingleProduct /> } />
+            <Route path='/checkout' element={ <Checkout /> }/>
+            <Route path='/category/:id' element={<Category />} />
           </Route> 
 
           {isExist && <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />} 

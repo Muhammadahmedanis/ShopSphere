@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaCartShopping, FaHeart, FaEye, } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { addToCart, getCartTotal } from "../redux/cartSlice";
+import { Link } from 'react-router-dom'
 
 const products = [
   {
@@ -125,14 +126,15 @@ function BestSeller() {
                   <div className="flex flex-wrap flex-col p-2 m-1 mt-1">
                     <FaCartShopping onClick={() => handleAddToCart(val)} size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
                     <FaHeart size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
-                    <FaEye size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
+                    <Link to={`/category/${val.name}`}>
+                      <FaEye size={35} className="p-2 mb-1 bg-white hover:bg-red-500 hover:text-white" />
+                    </Link>
                   </div>
                 </div>
               </div>
               <div className="mt-4">
                 <div className="font-semibold uppercase">{val.name}</div>
                 <div className="">{val.price}</div>
-
               </div>
             </div>
         ))}
