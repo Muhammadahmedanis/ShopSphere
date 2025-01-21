@@ -18,6 +18,8 @@ import Payment from './routes/Payment'
 import Checkout from './routes/Checkout'
 import Category from './routes/Category.jsx'
 import Order from './routes/AdminAccess/order.jsx'
+import Product from './routes/AdminAccess/Product.jsx'
+import CreateProd from './routes/AdminAccess/createProd.jsx'
 
 
 function App() {
@@ -48,6 +50,8 @@ function App() {
             <>
             <Route path='/dashboard' element={ isAdmin ?  <Dashboard /> : <Navigate to="/" /> } />
             <Route path='/order' element={<Order />} /> 
+            <Route path='/product' element={<Product />} /> 
+            <Route path='/create' element={ <CreateProd />} />
             </>
           }
 

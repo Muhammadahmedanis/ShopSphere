@@ -1,6 +1,27 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FaArrowUp, FaArrowDown } from "react-icons/fa6";
 
 function Cards() {
+    const[income, setIncome] = useState([]);
+    const[percen, setPercen] = useState(0);
+    useEffect(() => {
+        const getIncome = async () => {
+            try {
+                const res = await axios.get('/api/v1/order/income');
+                setIncome(res.data.data);
+                console.log(res.data.data);
+                
+                setPercen((res.data.data[0].total*100) / res.data.data[1].total - 100 )
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getIncome();
+    }, [])
+    // console.log(income[0]?.total);
+    // console.log(percen);
+    
   return (
     <div className='flex flex-wrap'>
     <div className="sm:w-auto md:w-1/2 xl:w-1/3 px-6 py-3">
@@ -24,7 +45,11 @@ function Cards() {
                 </div>
                 <div className="flex-1 text-right md:text-center">
                     <h2 className="font-bold uppercase text-gray-600 sm:w-72">Total Revenue</h2>
-                   <p className="font-bold text-3xl">$349 <span className="text-green-500"><i className="fas fa-caret-up"></i></span></p>
+                    <div className='flex justify-center items-center gap-x-2'>
+                        <p className="font-bold text-3xl">$ {income[0]?.total}<span className="text-green-500"><i className="fas fa-caret-up"></i></span></p>
+                        <p className='flex items-center gap-x-1'>{Math.floor(percen)}% {percen > 0 ? <FaArrowUp className='text-green-500 font-bold' size={16}/>  : <FaArrowDown className='text-red-500 font-bold' size={16}/> } </p>
+                    </div>
+                        <p className='text-[13px] text-center font-semibold'>Compared to last month</p>
                 </div>
             </div>
         </div>

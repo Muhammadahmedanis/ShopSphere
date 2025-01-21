@@ -111,7 +111,7 @@ export const getAllOrder = async (req, res) => {
 export const fetchIncomeByMonth =  async (req, res) => {
     const date = new Date();
     const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-    const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+    const previousMonth = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
     
     try {
         const income = await Order.aggregate([
@@ -130,8 +130,6 @@ export const fetchIncomeByMonth =  async (req, res) => {
                 },
             },
         ]);
-        console.log(income);
-        
         return res.status(StatusCodes.OK).send(sendSuccess({status: true, message: GET_SUCCESS_MESSAGES, data: income}))
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}));

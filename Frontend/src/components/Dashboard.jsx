@@ -1,4 +1,4 @@
-import React, { use } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { FiMoon } from "react-icons/fi";
 import { IoHomeOutline  } from "react-icons/io5";
 import { HiOutlineUsers } from "react-icons/hi2";
@@ -12,6 +12,8 @@ import Table from './Table';
 import Cards from './Cards';
 import { Link } from 'react-router-dom';
 import Modal from './Modal';
+import Chart from './Chart';
+import { FaBox } from "react-icons/fa6";
 
 function Dashboard() {
 const { dispatch } = use(AuthContext);  
@@ -25,6 +27,37 @@ const handleLogout = async () => {
         toast.error(error.response?.data.message)
     }
 }
+const MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+]
+  const[userStats, setUserStats] = useState([]);
+  useEffect(() => {
+    const getStats = async () => {
+      try {
+        const res = await axios.get("/api/v1/user/stats");
+        res.data.data.map((item) => (
+          setUserStats(prev => [
+            ...prev,
+            {name: MONTHS[item._id], "Active User": item.total},
+          ])
+        ))
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getStats();
+  }, [])
 
   return (
     <div className="flex h-screen bg-gray-200">
@@ -44,6 +77,12 @@ const handleLogout = async () => {
         <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
           <HiOutlineUsers size={22} />
         </button>
+
+        <Link to='/product'>
+          <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
+            <FaBox size={22} />
+          </button>
+        </Link>
 
         <Link to={'/order'}>
         <button className="p-1.5 text-gray-700 focus:outline-none transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100">
@@ -70,6 +109,9 @@ const handleLogout = async () => {
     <div className="flex-1 overflow-y-auto">
       <div className="p-5">
         <Cards />
+      </div>
+      <div>
+        <Chart userStats={userStats} />
       </div>
       <div className="bg-gray-300 m-5 p-4 rounded-lg shadow">
         <Table />

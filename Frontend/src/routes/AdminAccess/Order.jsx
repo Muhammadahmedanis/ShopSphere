@@ -125,10 +125,9 @@ function Order() {
               <label htmlFor="checkbox-all-search" className="sr-only">checkbox</label>
             </div>
           </th>
-          <th scope="col" className="px-4 py-3">ID</th>
-          <th scope="col" className="px-4 py-3">Name</th>
-          <th scope="col" className="px-4 py-3">Email</th>
-          <th scope="col" className="px-4 py-3">Join</th>
+          <th scope="col" className="px-4 py-3">Customer</th>
+          <th scope="col" className="px-4 py-3">Date</th>
+          <th scope="col" className="px-4 py-3">Amount</th>
           <th scope="col" className="px-4 py-3">Status</th>
           <th scope="col" className="px-4 py-3"></th>
         </tr>
@@ -147,11 +146,10 @@ function Order() {
               </div>
             </td>
             <td className="p-3">{user._id}</td>
-            <td className="p-3">{user.userName}</td>
-            <td className="p-3">{user.email}</td>
             <td className="p-3">{formatDate(user.createdAt)}</td>
+            <td className="p-3">{user.amount}</td>
             <td className="p-3">
-              {user.isVerified ? (
+              {user.status ? (
                 <span className="px-3 py-1 rounded-full bg-green-100 text-green-700">Active</span>
               ) : (
                 <span className="px-3 py-1 rounded-full bg-red-100 text-red-700">Inactive</span>

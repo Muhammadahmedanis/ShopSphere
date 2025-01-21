@@ -2,25 +2,54 @@ import { responseMessages } from "../constant/responseMessages.js";
 const { NO_USER, GET_SUCCESS_MESSAGES, DELETED_SUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, INVALID_CREDENTIALS, ADD_SUCCESS_MESSAGES, INTERNAL_ERROR_MESSAGE } = responseMessages;
 import { StatusCodes } from "http-status-codes";
 import { sendError, sendSuccess } from "../utils/responses.js";
-import Products from '../models/Product.js'
-
-
+import Products from '../models/Product.js';
+import fs from 'fs';
+import cloudinary from "../config/cloudinaryConfig.js";
 // @desc    POST
 // @route   post /api/v1/product
 // @access  Admin
 
 export const createProduct = async (req, res) => {
     const newProduct = new Products(req.body);
+    
     try {
-        if (newProduct) {
-            const saveProduct = await newProduct.save();
-            console.log(saveProduct);
-            return res.status(StatusCodes.OK).send(sendSuccess({status: true,message: ADD_SUCCESS_MESSAGES, data: saveProduct }))
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).send(sendSuccess({status: false, message: INTERNAL_ERROR_MESSAGE}))
+        if (!req.file) {
+            return res.status(StatusCodes.BAD_REQUEST).send({
+                status: false,
+                message: 'No image file provided.',
+            });
         }
+
+        const folder = 'clothes';
+
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            resource_type: 'image',
+            folder: folder,
+        });
+        
+        // Add Cloudinary URL to the product
+        newProduct.img = result.secure_url;
+        console.log(newProduct.img);
+
+        // Save product to the database
+        const savedProduct = await newProduct.save();
+
+        // Remove temporary file
+        fs.unlink(req.file.path, (err) => {
+            if (err) console.error('Error deleting file:', err);
+        });
+
+        return res.status(StatusCodes.OK).send(sendSuccess({
+            status: true,
+            message: 'Product created successfully!',
+            data: savedProduct,
+        }));
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}));
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({
+            status: false,
+            message: error.message,
+        }));
     }
 }
 

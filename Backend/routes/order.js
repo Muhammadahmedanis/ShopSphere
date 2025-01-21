@@ -8,8 +8,8 @@ orderRouter.post("/", tokenVerify, createOrder);
 orderRouter.put("/:id", verifyTokenAndAdmin, updateOrder);
 orderRouter.delete("/:id", verifyTokenAndAdmin, deleteOrder);
 orderRouter.get("/find/:userId", verifyTokenAndAuthorization, getOrder);
-orderRouter.get("/", verifyTokenAndAdmin, getAllOrder);
-orderRouter.get("/income", verifyTokenAndAdmin, fetchIncomeByMonth);
+orderRouter.get("/", getAllOrder); //verifyTokenAndAdmin
+orderRouter.get("/income", fetchIncomeByMonth); //verifyTokenAndAdmin,
 
 
 export default orderRouter;
