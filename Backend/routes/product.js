@@ -27,6 +27,17 @@ const upload = multer({
 
 const productRouter = express.Router();
 
+// productRouter.post("/", upload.single('img'), (req, res) => {
+//     console.log("Request Body:", req.body); // Logs other form fields
+//     console.log("File Info:", req.file); // Logs file info
+
+//     if (!req.file) {
+//         return res.status(400).json({ message: "No file received" });
+//     }
+
+//     res.status(200).json({ message: "File received", file: req.file });
+// });
+
 productRouter.post("/", upload.single('img'), createProduct); // verifyTokenAndAdmin, 
 productRouter.put("/:id",  updatetProduct); // verifyTokenAndAdmin, 
 productRouter.delete("/:id", deleteProduct); // verifyTokenAndAdmin,

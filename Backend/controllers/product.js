@@ -11,6 +11,7 @@ import cloudinary from "../config/cloudinaryConfig.js";
 
 export const createProduct = async (req, res) => {
     const newProduct = new Products(req.body);
+    console.log(newProduct);
     
     try {
         if (!req.file) {

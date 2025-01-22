@@ -1,18 +1,24 @@
 import React, { useActionState } from 'react'
 import Label from '../../components/Label';
+import { useDispatch } from 'react-redux';
+import { createProduct } from '../../helper/useCreate';
 
 function CreateProd() {
+    const dispatch = useDispatch();
     const[user, submitAcion, isPending] = useActionState(async (previousState, formData) => {
-        const payload = {
-            title: formData?.get("title"),
-            img: formData?.get("img"),
-            desc: formData?.get("desc"),
-            price: formData?.get("price"),
-            size: formData?.getAll("size"),
-            color: formData?.getAll("color"),
-            inStock: formData?.get("stock"),
-        }
-        console.log(payload);
+        const formDataToSend = new FormData();
+        // const payload = {    
+            formDataToSend.append("title", formData?.get("title"));
+            formDataToSend.append("desc", formData?.get("desc"));
+            formDataToSend.append("categories", formData?.get("categories").split(" "));
+            formDataToSend.append("size", formData?.get("size").split(" "));
+            formDataToSend.append("color", formData?.get("color").split(" "));
+            formDataToSend.append("price", formData?.get("price"));
+            formDataToSend.append("inStock", formData?.get("inStock"));
+            formDataToSend.append("img", formData?.get("img")); // Attach the file directly
+        // }
+        // console.log(payload);
+        dispatch(createProduct(formDataToSend));
     })
 
   return (
@@ -49,6 +55,16 @@ function CreateProd() {
                 placeholder="Type product name"
             />
             </div>
+            <div className="col-span-2">
+            <Label htmlFor="category" labelName='Category' />
+            <input
+                type="text"
+                name="categories"
+                id="category"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Type category name"
+            />
+            </div>
             <div className="col-span-2 sm:col-span-1">
             <Label htmlFor="price" labelName=' Price' />
             <input
@@ -61,40 +77,32 @@ function CreateProd() {
             <div className="col-span-2 text-sm sm:col-span-1">
                 <Label labelName="Stcok Available" htmlFor="stock" />
                 <div className='flex items-center gap-x-1'>
-                <input type="radio" name="stock" value="true"
-                />
-                True
-                <input type="radio" name='stock' value="false"
-                />
-                False
+                <select
+                    id="category"
+                    name='inStock'
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                    <option value="true" name="inStock">true</option>
+                    <option value="false" name="inStock">false</option>
+                </select>
                 </div>
             </div>
             <div className="col-span-2 sm:col-span-1">
                 <Label htmlFor="category" labelName='Select Color'/>
-                <select
-                    id="category"
-                    name='color'
-                    multiple
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                    <option value="Red" name="Red">Red</option>
-                    <option value="Blue" name="Blue">Blue</option>
-                    <option value="Black" name="Black">Black</option>
-                    <option value="Gray" name="Gray">Gray</option>
-                    <option value="Green" name="Green">Green</option>
-                </select>
+                <input
+                type="text"
+                name="color"
+                id="color"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Red Blue"/>
             </div>
             <div className="col-span-2 sm:col-span-1">
             <Label htmlFor="category" labelName='Select Size'/>
-            <select
-                id="category"
-                name='size'
-                multiple
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                <option value="XS" name="XS">XS</option>
-                <option value="S" name="S">S</option>
-                <option value="M" name="M">M</option>
-                <option value="L" name="L">L</option>
-            </select>
+            <input
+                type="text"
+                name="size"
+                id="size"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="S M"/>
             </div>
             <div className="col-span-2">
             <Label htmlFor="description" labelName='Product Description' />

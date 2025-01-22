@@ -6,11 +6,11 @@ let token = JSON.parse(localStorage.getItem("token"));
 
 export const createProduct = (product) => async (dispatch) => {
   try {
-    const response = await axios.post(`/api/v1/product`, {product}, {
+    const response = await axios.post(`/api/v1/product`, product, {
       headers: {
-        Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Required for file upload
       },
-    });
+  });
     dispatch(createProductSuccess(response.data.data)); // Dispatch success action with the ID
     toast.success(response.data.message);
     console.log(response.data);
