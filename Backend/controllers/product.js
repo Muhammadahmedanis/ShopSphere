@@ -20,9 +20,7 @@ export const createProduct = async (req, res) => {
                 message: 'No image file provided.',
             });
         }
-
         const folder = 'clothes';
-
         // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(req.file.path, {
             resource_type: 'image',
@@ -60,21 +58,71 @@ export const createProduct = async (req, res) => {
 // @desc    PUT
 // @route   put /api/v1/product/:id
 // @access  Admin
-
-export const updatetProduct = async (req, res) => {
+export const updatedProduct = async (req, res) => {
     try {
-        if(req.params.id){
-            const updProduct = await Products.findByIdAndUpdate(req.params.id, {
-                $set: req.body
-            }, {new: true})
-            return res.status(StatusCodes.OK).send(sendSuccess({status: true,message: UPDATE_SUCCESS_MESSAGES, data: updProduct }))
-        }else{
-            return res.status(StatusCodes.NOT_FOUND).send(sendSuccess({status: false, message: INTERNAL_ERROR_MESSAGE}))
+        const { id } = req.params;
+        if (!id) {
+            return res.status(StatusCodes.NOT_FOUND).send({
+                status: false,
+                message: 'Product ID not provided.',
+            });
         }
+
+        // Find the product to update
+        const product = await Products.findById(id);
+        if (!product) {
+            return res.status(StatusCodes.NOT_FOUND).send({
+                status: false,
+                message: 'Product not found.',
+            });
+        }
+
+        let updatedFields = { ...req.body };
+
+        // Handle image upload if a file is provided
+        if (req.file) {
+            const folder = 'clothes';
+            const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+                resource_type: 'image',
+                folder: folder,
+                transformation: [
+                    {
+                        width: 500, // Resize width (adjust based on requirements)
+                        height: 500, // Resize height (maintains aspect ratio)
+                        crop: "limit", // Ensures dimensions don't exceed specified values
+                    },
+                    {
+                        quality: "auto", // Automatically adjusts quality to reduce file size
+                        fetch_format: "auto", // Automatically converts to an efficient format like WebP
+                    },
+                ],
+            });
+
+            // Add the uploaded image URL to the updated fields
+            updatedFields.img = uploadResult.secure_url;
+        }
+
+        // Update the product with the new fields
+        const updatedProduct = await Products.findByIdAndUpdate(
+            id,
+            { $set: updatedFields },
+            { new: true } // Return the updated document
+        );
+
+        return res.status(StatusCodes.OK).send({
+            status: true,
+            message: 'Product updated successfully.',
+            data: updatedProduct,
+        });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}));
+        console.error(error); // Log the error for debugging
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            status: false,
+            message: error.message,
+        });
     }
-}
+};
+
 
 
 

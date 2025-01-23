@@ -7,7 +7,6 @@ function CreateProd() {
     const dispatch = useDispatch();
     const[user, submitAcion, isPending] = useActionState(async (previousState, formData) => {
         const formDataToSend = new FormData();
-        // const payload = {    
             formDataToSend.append("title", formData?.get("title"));
             formDataToSend.append("desc", formData?.get("desc"));
             formDataToSend.append("categories", formData?.get("categories").split(" "));
@@ -16,8 +15,6 @@ function CreateProd() {
             formDataToSend.append("price", formData?.get("price"));
             formDataToSend.append("inStock", formData?.get("inStock"));
             formDataToSend.append("img", formData?.get("img")); // Attach the file directly
-        // }
-        // console.log(payload);
         dispatch(createProduct(formDataToSend));
     })
 

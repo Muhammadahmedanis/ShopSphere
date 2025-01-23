@@ -1,6 +1,6 @@
 import express from 'express'
 import { verifyTokenAndAdmin } from '../middleware/token.js';
-import { createProduct, deleteProduct, getAllProduct, getProduct, updatetProduct } from '../controllers/product.js';
+import { createProduct, deleteProduct, getAllProduct, getProduct, updatedProduct } from '../controllers/product.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -27,20 +27,9 @@ const upload = multer({
 
 const productRouter = express.Router();
 
-// productRouter.post("/", upload.single('img'), (req, res) => {
-//     console.log("Request Body:", req.body); // Logs other form fields
-//     console.log("File Info:", req.file); // Logs file info
-
-//     if (!req.file) {
-//         return res.status(400).json({ message: "No file received" });
-//     }
-
-//     res.status(200).json({ message: "File received", file: req.file });
-// });
-
-productRouter.post("/", upload.single('img'), createProduct); // verifyTokenAndAdmin, 
-productRouter.put("/:id",  updatetProduct); // verifyTokenAndAdmin, 
-productRouter.delete("/:id", deleteProduct); // verifyTokenAndAdmin,
+productRouter.post("/", verifyTokenAndAdmin, upload.single('img'), createProduct); 
+productRouter.put("/:id", verifyTokenAndAdmin, upload.single('img'), updatedProduct); 
+productRouter.delete("/:id", verifyTokenAndAdmin, deleteProduct);
 productRouter.get("/find/:id", getProduct);
 productRouter.get("/", getAllProduct);
 

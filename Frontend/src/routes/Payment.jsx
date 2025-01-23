@@ -3,7 +3,7 @@ import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe('pk_test_51QiEw1LgwSSYx4xAHVWHK9Aarq765JxeUHD1q04ytwg4nnGYZ6clIgLJN5DdU4rn8Pg4PaU1kUCXbWcXuMlkgNpU00dH5bw8GR');
-
+// priceId: price_1QiGp1LgwSSYx4xAc7MM4Ptf
 const Payment = () => {
     const [items, setItems] = useState([
         { name: '', price: '', quantity: '' },

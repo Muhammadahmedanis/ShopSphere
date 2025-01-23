@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react'
-import { FaStar } from "react-icons/fa6";
-import { useDispatch } from 'react-redux';
+import { FaPlus, FaStar } from "react-icons/fa6";
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { addToCart, getCartTotal } from "../redux/cartSlice";
+import { addToCart, getCartTotal, updateQty } from "../redux/cartSlice";
+import { createAddToCart } from '../helper/useCreate';
+import { TiMinus } from 'react-icons/ti';
 
 
 export default function SingleProduct() {
@@ -12,24 +14,32 @@ export default function SingleProduct() {
   const[product, setProduct] = useState({});
   const[isColor, setIsColor] = useState([]);
   const[isSize, setIsSize] = useState([]);
-
-  const [qty] = useState(1);
-    const dispatch = useDispatch();
-    const handleAddToCart = (item) => {
-      let totalPrice = qty * item.price;
+  let qty = 1 ; 
+  const dispatch = useDispatch();
+  const handleAddToCart = (item) => {
+    dispatch(createAddToCart(item));
+    // dispatch(getCartTotal());
+  }
+  console.log(product);
   
-      const tempProduct = {
-        ...item,
-        quantity: qty,
-        color: isColor,
-        size: isSize,
-        totalPrice, 
-      }
-      console.log(tempProduct);
-      
-      dispatch(addToCart(tempProduct));
-      dispatch(getCartTotal());
-    }
+  useEffect(() => {
+      dispatch(getCartTotal())
+  }, [useSelector(state => state.cart)])
+
+  const increaseQty = (cartProductId) => {
+    qty = qty + 1;
+    
+    // console.log(productQty);
+    //   const newQty = productQty + 1;
+    //   dispatch(updateQty({id: cartProductId, quantity: newQty}))
+  };
+  
+  console.log(qty);
+  const decreaseQty = (cartProductId) => {
+       qty = qty - 1;  
+      // const newQty = Math.max(productQty - 1, 1);
+      // dispatch(updateQty({id: cartProductId, quantity: newQty}))
+  };
 
 
   useEffect(() => {
@@ -57,20 +67,10 @@ export default function SingleProduct() {
               alt="Product3"
               className="aspect-[64/85] object-cover object-top w-full cursor-pointer border-b-2 border-transparent"
             />
-            <img
-              src="https://readymadeui.com/images/product3.webp"
-              alt="Product4"
-              className="aspect-[64/85] object-cover object-top w-full cursor-pointer border-b-2 border-transparent"
-            />
-            <img
-              src="https://readymadeui.com/images/product1.webp"
-              alt="Product5"
-              className="aspect-[64/85] object-cover object-top w-full cursor-pointer border-b-2 border-transparent"
-            />
           </div> */}
           <div className="flex-1">
             <img
-              src="https://readymadeui.com/images/product6.webp"
+              src={product.img}
               alt="Product"
               className="w-full aspect-[500/450] object-top object-cover"
             />
@@ -81,30 +81,6 @@ export default function SingleProduct() {
       <div className="w-full lg:col-span-2">
         <div>
           <h3 className="text-lg font-bold text-gray-800">{product.title}</h3>
-          {/* <div className="flex items-center space-x-1 mt-2">
-            {Array(4)
-              .fill()
-              .map((_, i) => (
-                <svg
-                  key={i}
-                  className="w-4 h-4 fill-purple-800"
-                  viewBox="0 0 14 13"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                </svg>
-              ))}
-            <svg
-              className="w-4 h-4 fill-[#CED5D8]"
-              viewBox="0 0 14 13"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-            </svg>
-            <p className="text-sm text-gray-800 !ml-3">4.0 (150)</p>
-          </div> */}
           <div className="flex items-center flex-wrap gap-4 mt-3">
             <h4 className="text-gray-800 text-2xl font-bold">${product.price}</h4>
             <p className="text-gray-500 text-lg">
@@ -154,6 +130,20 @@ export default function SingleProduct() {
             </div>
           </div>
         </div>
+
+            <div className="flex items-center mt-2">
+            <button
+                onClick={() => decreaseQty(product._id)}
+                className="rounded-full bg-black text-white font-light text-[14px] p-1 border">
+                <TiMinus />
+            </button>
+            <span className="font-semibold text-xl px-2">{qty}</span>
+            <button
+                onClick={() => increaseQty(product._id)}
+                className="rounded-full bg-black text-white font-light text-[14px] p-1 border">
+                <FaPlus />
+            </button>
+            </div>
 
         <hr className="my-6 border-gray-300" />
 
@@ -244,8 +234,6 @@ export default function SingleProduct() {
               <ul className="list-disc pl-5 mt-2 space-y-2 text-sm text-gray-500">
                 <li>Eco-friendly, breathable fabric.</li>
                 <li>Classic fit for everyday comfort.</li>
-                <li>Durable stitching for long-lasting wear.</li>
-                <li>Available in multiple colors and sizes.</li>
               </ul>
             </div>
           </div>

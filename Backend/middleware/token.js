@@ -8,7 +8,7 @@ const { sign, verify } = jwt;
 export const generateToken = ({data, res}) => {
     const token = sign({ 
         data,
-    }, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
+    }, process.env.JWT_SECRET_KEY, { expiresIn: "2d" });
     // res.cookie("token", token, {
     //     httpOnly: true, // Cookie cannot be accessed by client-side scripts
     //     secure: process.env.NODE_ENV === "production", // Use secure cookies in production

@@ -6,11 +6,46 @@ import { TiMinus } from "react-icons/ti";
 import { IoCloseCircle } from "react-icons/io5";
 import { FaArrowRight } from "react-icons/fa";
 import { data, Link } from 'react-router-dom';
+import { loadStripe } from "@stripe/stripe-js";
+import axios from 'axios';
+// import { useHistory } from 'react-router';
+const stripePromise = loadStripe("pk_test_51QiEw1LgwSSYx4xAHVWHK9Aarq765JxeUHD1q04ytwg4nnGYZ6clIgLJN5DdU4rn8Pg4PaU1kUCXbWcXuMlkgNpU00dH5bw8GR");
+let token = JSON.parse(localStorage.getItem("token"));
 
 function AddToCart() {
     const dispatch = useDispatch();
     const{data: cartProducts, totalAmount} = useSelector((state) => state.cart);
-    // console.log(cartProducts);
+    // const history = useHistory();
+    const createCheckoutSession = async () => {
+        try {
+            const response = await axios.post("/api/v1/order/checkout",
+                {
+                    cart: cartProducts.map((item) => ({
+                        productId: item._id,
+                        quantity: item.quantity,
+                    })),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log(response.data);
+            
+            const stripe = await stripePromise;
+            const { error } = await stripe.redirectToCheckout({ sessionId: response.data.data });
+            // history.push('/success/:id')
+            <Navigate to='/success/:id' />       
+            if (error) {
+                console.error("Stripe checkout error:", error);
+            }
+        } catch (error) {
+            console.error("Error during checkout:", error.message);
+        }
+    };
+
+
     
     useEffect(() => {
         dispatch(getCartTotal())
@@ -46,9 +81,8 @@ function AddToCart() {
                             {/* Image Section */}
                             <div className="w-20 h-28 max-sm:w-24 max-sm:h-24 shrink-0">
                                 <img
-                                src="https://readymadeui.com/images/watch1.webp"
-                                alt="Stylish Golden Watch"
-                                className="w-full h-full object-contain"
+                                src={item.img}
+                                className="w-full h-full object-cover"
                                 />
                             </div>
 
@@ -101,9 +135,9 @@ function AddToCart() {
             }
         {
          cartProducts.length > 0 && 
-         <Link to='/checkout'>
-            <button className='flex bottom-1 bg-red-400 items-center mt-3 px-3 py-2 rounded-sm gap-x-1'>Checkout <FaArrowRight size={20}/> </button>
-         </Link>
+        //  <Link to='/checkout'>
+            <button onClick={createCheckoutSession} className='flex bottom-1 bg-red-400 items-center mt-3 px-3 py-2 rounded-sm gap-x-1'>Checkout <FaArrowRight size={20}/> </button>
+        //  </Link>
         }
         </div>
     </div>

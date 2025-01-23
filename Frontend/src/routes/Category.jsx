@@ -8,14 +8,10 @@ import { useLocation } from 'react-router-dom';
 import BestSeller from '../components/BestSeller';
 
 const sortOptions = [
-  // { name: 'Most Popular',  current: true },
-  // { name: 'Best Rating', current: false },
   { name: 'Newest' },
   { name: 'Low to High' },
   { name: 'High to Low'},
 ];
-
-
 
 const filters = [
   {
@@ -41,14 +37,6 @@ const filters = [
       { value: 'XL', label: 'XL', checked: false },
     ],
   },
-  // {
-  //   id: 'category',
-  //   name: 'Category',
-  //   options: [
-  //     { value: 'Man', label: 'Man', checked: false },
-  //     { value: 'Woman', label: 'Woman', checked: false },
-  //   ],
-  // },
 ];
 
 function classNames(...classes) {
@@ -112,16 +100,6 @@ const handleAddToCart = (item) => {
                 </button>
               </div>
               <form className="px-4 py-6">
-                {/* <h3 className="font-medium text-gray-900">Categories</h3>
-                <ul className="mt-4 space-y-4">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href} className="text-gray-700">
-                        {category.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul> */}
                 <div className="mt-6">
                   {filters.map((section) => (
                     <div key={section.id} className="border-t border-gray-200 py-4">

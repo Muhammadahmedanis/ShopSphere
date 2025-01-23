@@ -20,6 +20,7 @@ import Category from './routes/Category.jsx'
 import Order from './routes/AdminAccess/order.jsx'
 import Product from './routes/AdminAccess/Product.jsx'
 import CreateProd from './routes/AdminAccess/createProd.jsx'
+import Success from './routes/Success.jsx'
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
             <Route path='/order' element={<Order />} /> 
             <Route path='/product' element={<Product />} /> 
             <Route path='/create' element={ <CreateProd />} />
+            {/* <Route path='/success/:orderId' element={ <Success /> } /> */}
             </>
           }
 

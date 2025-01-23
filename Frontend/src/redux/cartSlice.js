@@ -13,12 +13,13 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
       addToCart: (state, action) => {
-          const exisingProduct = state.data.find(product => product.id === action.payload.id);
+          const exisingProduct = state.data.find(product => product?.id === action.payload._id);
           if(exisingProduct){
               const tempCart = state.data.map((product) => {
                   if(product.id === action.payload.id){
                       let newQty = product.quantity + action.payload.quantity;
                       let newTotalPrice = newQty * product.price;
+                      console.log(product);
                       return {
                           ...product, 
                           quantity: newQty, 
@@ -53,6 +54,7 @@ export const cartSlice = createSlice({
       },
 
       getCartTotal: (state) => {
+        // console.log(state.data);
           state.totalAmount = state.data.reduce((cartTotal, cartItem) => {
               return (cartTotal += cartItem.totalPrice)
           }, 0)

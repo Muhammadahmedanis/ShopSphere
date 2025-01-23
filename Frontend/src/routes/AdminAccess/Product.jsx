@@ -15,10 +15,11 @@ import { fetchProducts } from '../../helper/useFetch.js';
 import { deleteProduct } from '../../helper/useDelete.js';
 import { FaImage } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { editProduct } from '../../helper/useEdit.js';
+// const[isOpen, setIsOpen] = useState(false);
 
 function Product() {
     const [modal, setModal] = useState(false);
-    const[isOpen, setIsOpen] = useState(false);
     const [editUser, setEditUser] = useState({
         title: "",
         img: "",
@@ -41,47 +42,53 @@ function Product() {
         dispatch(deleteProduct(id))
     }
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        // Array of month names
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        // Extract day and month
-        const day = date.getDate();
-        const month = months[date.getMonth()];
-        return `${day} ${month}`;
-    }
-    
     const handleEdit = async(id) => {
-        setModal(true);
-        const data = product.find((val) => val._id === id )
-        setEditUser(data);
-        // try {
-        // } catch (error) {
-        //     toast.error(error.response?.data.message)
-        // }
+      setModal(true);
+      const data = product.find((val) => val._id === id )
+      setEditUser(data);
     }
-    // console.log(editUser);
 
     const[user, submitAcion, isPending] = useActionState(async (previousState, formData) => {
-        const payload = {
-            title: formData?.get("title"),
-            img: formData?.get("img"),
-            desc: formData?.get("desc"),
-            price: formData?.get("price"),
-            size: formData?.get("size"),
-            color: formData?.get("color"),
-            inStock: formData?.get("stock"),
-        }
-        console.log(payload);
-        
-        // try {
-        //     const response = await axios.put(`/api/v1/producr/${editUser._id}`, {payload});
-        //     toast.success(response.data.message);
-        //     fetchData();
-        // } catch (error) {
-        //     toast.error(error.response?.data.message);
-        // }
-    })
+        const formDataToSend = new FormData();
+          formDataToSend.append("title", formData?.get("title"));
+          formDataToSend.append("desc", formData?.get("desc"));
+
+          let categories = formData?.get("categories");
+          if (categories) {
+              // Split the categories by space and remove extra spaces
+              let splitCategories = categories.split(",").map((category) => category.trim());
+              // Append each category separately
+              splitCategories.forEach((category) => {
+                  formDataToSend.append("categories", category); // Append each category as a separate entry
+              });
+          }
+
+          let sizes = formData?.get("size");
+          if (sizes) {
+              // Split the categories by space and remove extra spaces
+              let splitSizes = sizes.split(",").map((size) => size.trim());
+              // Append each category separately
+              splitSizes.forEach((size) => {
+                  formDataToSend.append("size", size); // Append each category as a separate entry
+              });
+          }
+
+          let colors = formData?.get("color");
+          if (colors) {
+              // Split the categories by space and remove extra spaces
+              let splitColors = colors.split(",").map((colors) => colors.trim());
+              // Append each category separately
+              splitColors.forEach((color) => {
+                  formDataToSend.append("color", color); // Append each category as a separate entry
+              });
+          }
+
+          formDataToSend.append("price", formData?.get("price"));
+          formDataToSend.append("inStock", formData?.get("inStock"));
+          formDataToSend.append("img", formData?.get("img")); // Attach the file directly
+          dispatch(editProduct(formDataToSend, editUser._id))
+          setModal(false)
+        })
       
     return (
 <div className="relative shadow-md sm:rounded-lg">
@@ -140,7 +147,7 @@ function Product() {
             <td className="p-3">{product._id}</td>
             <td className="p-3 flex gap-x-1 items-center">
                 <div>
-                    <img src="/l" alt="" className='border w-10 h-8 rounded-sm' />
+                    <img src={product.img} alt="" className='border w-10 h-10 rounded-full' />
                 </div>
                 {product.title}
             </td>
@@ -156,7 +163,7 @@ function Product() {
               {modal && (
                 <div
                     id="authentication-modal"
-                    className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full h-screen bg-black bg-opacity-50">
+                    className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full h-screen  bg-opacity-50">
                     <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow dark:bg-gray-700">
                     <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white"> Update </h3>
@@ -172,21 +179,15 @@ function Product() {
                     <form action={submitAcion} className="p-4 md:p-5">
                         <div className="grid gap-4 mb-4 grid-cols-2">
                             <div className='col-span-full'>
-                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-4 py-5">
-                                <div className="text-center">
-                                    {/* <FaImage className='text-gray-400 m-auto' size={50} /> */}
-                                <div className="mt-4 flex text-sm text-gray-600">
-                                    <img
-                                    src={editUser.img}
-                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"/>
-                                </div>
-                                </div>
+                            <div className="rounded-lg border border-dashed border-gray-900/25 p-2">
+                              <img
+                              src={editUser.img}
+                              className="rounded-md focus-within:outline-none h-20 focus-within:ring-offset-2"/>
                             </div>
                             </div>
                             <div className='col-span-full'>
                             <input className="block w-full text-[16px] p-2 text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
                             name='img'
-                            onChange={(e) => setEditUser({ ...editUser, img: e.target.files[0] })}
                             id="large_size" 
                             type="file"
                             />
@@ -197,11 +198,23 @@ function Product() {
                             <input
                                 type="text"
                                 name="title"
-                                onChange={(e) => setEditUser({ ...editUser, title: e.target.value })}
                                 value={editUser.title}
+                                onChange={(e) => setEditUser({ ...editUser, title: e.target.value })}
                                 id="name"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Type product name"
+                            />
+                            </div>
+                            <div className="col-span-2">
+                            <Label htmlFor="category" labelName='Category' />
+                            <input
+                                type="text"
+                                name="categories"
+                                id="category"
+                                value={editUser.categories.join(" ")}
+                                onChange={(e) => setEditUser({ ...editUser, categories: e.target.value.split(" ") })}
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Type category name"
                             />
                             </div>
                             <div className="col-span-2 sm:col-span-1">
@@ -209,66 +222,44 @@ function Product() {
                             <input
                                 type="number"
                                 name="price"
-                                onChange={(e) => setEditUser({ ...editUser, price: e.target.value })}
                                 value={editUser.price}
+                                onChange={(e) => setEditUser({ ...editUser, price: e.target.value })}
                                 id="price"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="$2999"/>
                             </div>
                             <div className="col-span-2 sm:col-span-1">
                             <Label htmlFor="category" labelName='Category'/>
-                            <select
-                                id="category"
-                                name='size'
-                                multiple
-                                onChange={(e) => {
-                                    const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
-                                    setEditUser({ ...editUser, size: selectedOptions });
-                                }}
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                <option value="">
-                                Select Size
-                                </option>
-                                {Array.isArray(editUser.size) &&
-                                    editUser.size.map((size, idx) => (
-                                    <option key={idx} value={size}>
-                                        {size}
-                                    </option>
-                                ))}
-                            </select>
+                            <input
+                            type="text"
+                            name="size"
+                            id="size"
+                            value={editUser.size.join(" ")}
+                            onChange={(e) => setEditUser({ ...editUser, size: e.target.value.split(" ") })}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="S M"/>
                             </div>
                             <div className="col-span-2 sm:col-span-1">
-                                <select
-                                    id="category"
-                                    name='color'
-                                    multiple
-                                    onChange={(e) => {
-                                        const selectedOptions = Array.from(e.target.selectedOptions).map((option) => option.value);
-                                        setEditUser({ ...editUser, color: selectedOptions });
-                                    }}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                                    <option value="">
-                                    Select Color
-                                    </option>
-                                    {Array.isArray(editUser.color) &&
-                                        editUser.color.map((color, idx) => (
-                                        <option key={idx} value={color}>
-                                            {color}
-                                        </option>
-                                    ))}
-                                </select>
+                            <input
+                            type="text"
+                            name="color"
+                            id="color"
+                            value={editUser.color.join(" ")}
+                            onChange={(e) => setEditUser({ ...editUser, color: e.target.value.split(" ") })}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Red Blue"/>
                             </div>
                             <div className="col-span-2 text-sm sm:col-span-1">
                                 <Label labelName="Stcok Available" htmlFor="stock" />
                                 <div className='flex items-center gap-x-1'>
-                                <input type="radio" name="stock" value="true"
-                                    checked={editUser.inStock === "true"}
-                                    onChange={(e) => setEditUser({ ...editUser, inStock: e.target.value })}
+                                <input type="radio" name="inStock" value="true"
+                                  checked={editUser?.inStock === true}
+                                  onChange={() => setEditUser({ ...editUser, inStock: true })}
                                 />
                                 True
-                                <input type="radio" name='stock' value="false"
-                                checked={editUser.inStock === "false"}
-                                onChange={(e) => setEditUser({...editUser, inStock: e.target.value })}
+                                <input type="radio" name='inStock' value="false"
+                                  checked={editUser?.inStock === false}
+                                  onChange={() => setEditUser({ ...editUser, inStock: false })}
                                 />
                                 False
                                 </div>
@@ -287,12 +278,11 @@ function Product() {
                         </div>
                         <button
                             type="submit"
-                            className="text-white inline-flex justify-center items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            className="text-white inline-flex justify-center items-center w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Update product
                             { isPending && <div className="w-7 h-7 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> }
                         </button>
                         </form>
-
                     </div>
                     </div>
                 </div>

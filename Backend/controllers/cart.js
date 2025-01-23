@@ -1,5 +1,6 @@
 import { responseMessages } from "../constant/responseMessages.js";
-const { NO_USER, GET_SUCCESS_MESSAGES, DELETED_SUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, INVALID_CREDENTIALS, ADD_SUCCESS_MESSAGES, INTERNAL_ERROR_MESSAGE } = responseMessages;
+import Users from '../models/user.js'
+const { NO_USER, GET_SUCCESS_MESSAGES, DELETED_SUCCESS_MESSAGES, UPDATE_SUCCESS_MESSAGES, MISSING_FIELDS, INVALID_CREDENTIALS, ADD_SUCCESS_MESSAGES, INTERNAL_ERROR_MESSAGE } = responseMessages;
 import { StatusCodes } from "http-status-codes";
 import { sendError, sendSuccess } from "../utils/responses.js";
 import Cart from '../models/Cart.js';
@@ -10,13 +11,20 @@ import Cart from '../models/Cart.js';
 // @access  Public
 
 export const createCart = async (req, res) => {
-    const newCart = new Cart(req.body);
     try {
-        if (newCart) {
-            const saveCart = await newCart.save();
-            return res.status(StatusCodes.OK).send(sendSuccess({status: true,message: ADD_SUCCESS_MESSAGES, data: saveCart }))
-        } else {
-            return res.status(StatusCodes.NOT_FOUND).send(sendSuccess({status: false, message: INTERNAL_ERROR_MESSAGE}))
+        const userId = req.user.data._id;
+        if(userId){
+            const productId = req.body._id
+            const newCart = new Cart({...req.body, userId, productId});
+            console.log(newCart);
+            if (newCart) {
+                const saveCart = await newCart.save();
+                return res.status(StatusCodes.OK).send(sendSuccess({status: true,message: ADD_SUCCESS_MESSAGES, data: saveCart }))
+            } else {
+                return res.status(StatusCodes.BAD_REQUEST).send(sendSuccess({status: false, message: MISSING_FIELDS}))
+            }
+        }else{
+            return res.status(StatusCodes.BAD_REQUEST).send(sendError({status: false, message: NO_USER}))
         }
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(sendError({status: false, message: error.message}));

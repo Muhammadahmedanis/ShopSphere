@@ -4,14 +4,15 @@ import { toast } from "react-toastify";
 
 let token = JSON.parse(localStorage.getItem("token"));
 
-export const updateProduct = (product, id) => async (dispatch) => {
+export const editProduct = (product, id) => async (dispatch) => {
   try {
-    const response = await axios.put(`/api/v1/product/${id}`, {
+    const response = await axios.put(`/api/v1/product/${id}`, product, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch(editProductSuccess({id, product})); // Dispatch success action with the ID
+    console.log(response.data.data);
+    dispatch(editProductSuccess(response.data.data)); // Dispatch success action with the ID
     toast.success(response.data.message);
     console.log(response.data);
   } catch (error) {
